@@ -6,8 +6,8 @@ A new Theme (Android Material Design) for Windows Message Boxes (by hooking)
 
 ## Screenshots:
 #### Before (Unhooked/Default):
-![Default](https://github.com/mrousavy/MaterialDesignWindowsDialogs/blob/master/Images/Before.png)
+![Default](https://github.com/mrousavy/MaterialDesignWindowsDialogs/blob/master/Images/Unhooked.png?raw=true)
 
 
 #### After (Hooked/Material):
-![Material Dialog](https://github.com/mrousavy/MaterialDesignWindowsDialogs/blob/master/Images/After.png)
+![Material Dialog](https://github.com/mrousavy/MaterialDesignWindowsDialogs/blob/master/Images/Hooked.png?raw=true)
