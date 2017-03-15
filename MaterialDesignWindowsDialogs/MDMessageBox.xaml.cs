@@ -17,10 +17,15 @@ namespace MaterialDesignWindowsDialogs {
             InitializeComponent();
 
             SetWindowSize(hWnd);
-
+            
+            ShowCorrectDialog(text, caption, type);
+        }
+        
+        //Select and Show the correct Dialog from the type
+        private async void ShowCorrectDialog(string text, string caption, DialogType type){
             switch(type) {
                 case DialogType.Ok:
-                    DialogOK(text, caption);
+                    await DialogOK(text, caption);
                     break;
                 case DialogType.YesNo:
                     break;
@@ -29,6 +34,7 @@ namespace MaterialDesignWindowsDialogs {
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
+            Close();
         }
 
         //Set the Window Size
