@@ -6,12 +6,19 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace MdMsgBox {
-    public class Hook : IEntryPoint {
-        private InjectorInterface _interface;
+    public class Main : IEntryPoint {
+        private readonly InjectorInterface _interface;
+        private string _channelName;
 
 
-        public Hook(RemoteHooking.IContext inContext, string inChannelName) {
-            _interface = RemoteHooking.IpcConnectClient<InjectorInterface>(inChannelName);
+        public Main(RemoteHooking.IContext inContext, string inChannelName) {
+            try {
+                _interface = RemoteHooking.IpcConnectClient<InjectorInterface>(inChannelName);
+                _channelName = inChannelName;
+                //_interface.IsInstalled(Process.GetCurrentProcess().Id);
+            } catch(Exception ex) {
+                //_interface.ErrorHandler(ex);
+            }
         }
 
         public void Run(RemoteHooking.IContext inContext, string inChannelName) {
@@ -25,7 +32,7 @@ namespace MdMsgBox {
 
             hook.ThreadACL.SetExclusiveACL(new[] { 0 });
 
-            MessageBox(IntPtr.Zero, "Hook Initialized", "Success", (int)Modifiers.MB_OK);
+            MessageBox(IntPtr.Zero, "Hook Initialized", "Success", (int)Modifiers.Ok);
         }
 
         //-- ORIGINAL WINDOWS API MESSAGEBOX SIGNATURE
@@ -37,16 +44,20 @@ namespace MdMsgBox {
         //);
 
 
+        //user32 Import -- WinAPI
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int MessageBox(IntPtr hWnd, string text, string caption, int options);
+        public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options);
 
-
+        //Delegate Signature for user32 Import
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
-        private delegate int DMessageBox(IntPtr hWnd, string text, string caption, int options);
+        public delegate int DMessageBox(IntPtr hWnd, string text, string caption, int options);
 
-
+        //Delegate Signature implementation
         private static int MessageBoxHook(IntPtr hWnd, string text, string caption, int options) {
             new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show();
+
+            System.Windows.MessageBox.Show("sup");
+
             //return MessageBox(hWnd, text, caption, options);
             return (int)ReturnValues.Ok;
         }
@@ -67,14 +78,14 @@ namespace MdMsgBox {
 
         //Modifiers of Message Box
         public enum Modifiers {
-            MB_ABORTRETRYIGNORE = 0x00000002,
-            MB_CANCELTRYCONTINUE = 0x00000006,
-            MB_HELP = 0x00004000,
-            MB_OK = 0x00000000,
-            MB_OKCANCEL = 0x00000001,
-            MB_RETRYCANCEL = 0x00000005,
-            MB_YESNO = 0x00000004,
-            MB_YESNOCANCEL = 0x00000003
+            AbortRetryignore = 0x00000002,
+            CancelTryContinue = 0x00000006,
+            Help = 0x00004000,
+            Ok = 0x00000000,
+            OkCancel = 0x00000001,
+            RetryCancel = 0x00000005,
+            YesNo = 0x00000004,
+            YesNoCancel = 0x00000003
         }
     }
 
@@ -83,17 +94,12 @@ namespace MdMsgBox {
 
 
     public class InjectorInterface : MarshalByRefObject {
-        public void IsInstalled() {
-            Console.WriteLine("Injected ;).\r\n");
+        public void IsInstalled(int inClientPid) {
+            Console.WriteLine($"Injected into {inClientPid}");
         }
 
-        public void debug(String msg) {
-            Console.Out.WriteLine("{0}\r\n", msg);
-        }
-
-        public void ReportException(Exception InInfo) {
-            Console.WriteLine("Error:\r\n" + InInfo.ToString());
+        public void ErrorHandler(Exception ex) {
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
-
 }

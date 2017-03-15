@@ -57,7 +57,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hook.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="MDMessageBox.xaml.cs">
       <DependentUpon>MDMessageBox.xaml</DependentUpon>
     </Compile>

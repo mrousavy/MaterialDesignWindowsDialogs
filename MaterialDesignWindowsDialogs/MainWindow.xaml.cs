@@ -41,31 +41,6 @@ namespace MaterialDesignWindowsDialogs {
         //  _In_ UINT    uType
         //);
 
-        //Return Values of Message Box
-        public enum ReturnValues {
-            Abort = 3,
-            Cancel = 2,
-            Continue = 11,
-            Ignore = 5,
-            No = 7,
-            Yes = 6,
-            Ok = 1,
-            Retry = 4,
-            TryAgain = 10
-        }
-
-        //Modifiers of Message Box
-        public enum Modifiers {
-            AbortRetryignore = 0x00000002,
-            CancelTryContinue = 0x00000006,
-            Help = 0x00004000,
-            Ok = 0x00000000,
-            OkCancel = 0x00000001,
-            RetryCancel = 0x00000005,
-            YesNo = 0x00000004,
-            YesNoCancel = 0x00000003
-        }
-
         private void InjectClick(object sender, RoutedEventArgs e) {
             try {
                 string channelName = null;
