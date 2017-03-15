@@ -4,10 +4,10 @@ A new Theme (Android Material Design) for Windows Message Boxes (by hooking)
 [Windows Message Box](https://msdn.microsoft.com/en-us/library/windows/desktop/ms645505(v=vs.85).aspx)
 
 # Features
-- [x] Basic Dialog Style
+- [ ] Basic Dialog Style fully working
 - [x] Hook own Process
 - [ ] Dialog Style for **all** Dialogs (Ok, YesNo, etc.)
-- [ ] Global Hook (for all Programs)
+- [x] Global Hook (for all Programs)
 
 # Screenshots:
 #### Before (Unhooked/Default):
