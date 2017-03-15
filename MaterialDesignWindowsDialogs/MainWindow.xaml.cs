@@ -1,5 +1,8 @@
 ﻿using EasyHook;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -17,6 +20,9 @@ namespace MaterialDesignWindowsDialogs {
                     LocalHook.GetProcAddress("user32.dll", "MessageBoxW"),
                     new DMessageBox(MessageBoxHook),
                     this);
+
+                IEnumerable<int> pidsEnum = Process.GetProcesses().Select(p => p.Id);
+                int[] pids = pidsEnum.ToArray();
 
                 hook.ThreadACL.SetInclusiveACL(new[] { 0 });
 
@@ -45,8 +51,9 @@ namespace MaterialDesignWindowsDialogs {
 
 
         private static int MessageBoxHook(IntPtr hWnd, string text, string caption, int options) {
-            MessageBox(hWnd, "HOOKED MSGBOX :)", "my caption", options);
-            return MessageBox(hWnd, text, caption, options);
+            new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show();
+            //return MessageBox(hWnd, text, caption, options);
+            return 1;
         }
 
 
