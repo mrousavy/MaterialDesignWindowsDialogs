@@ -1,35 +1,35 @@
 ﻿using EasyHook;
+using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
+using System.Runtime.Remoting;
 using System.Windows;
-using System.Windows.Interop;
 
 namespace MaterialDesignWindowsDialogs {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
+        private string _path = "MdMsgBox.dll";
+
+
         public MainWindow() {
             InitializeComponent();
 
-            this.Loaded += delegate {
-                LocalHook hook = LocalHook.Create(
-                    LocalHook.GetProcAddress("user32.dll", "MessageBoxW"),
-                    new DMessageBox(MessageBoxHook),
-                    this);
+            Loaded += delegate {
+                try {
+                    OpenFileDialog ofd = new OpenFileDialog {
+                        Title = "Select MdMsgBox.dll",
+                        Filter = "DLL Files|*.dll",
+                        InitialDirectory = @"C:\"
+                    };
 
-                IEnumerable<int> pidsEnum = Process.GetProcesses().Select(p => p.Id);
-                int[] pids = pidsEnum.ToArray();
-
-                hook.ThreadACL.SetInclusiveACL(new[] { 0 });
-
-                WindowInteropHelper wih = new WindowInteropHelper(this);
-                IntPtr hWnd = wih.Handle;
-
-                MessageBox(hWnd, "Hallo", "Caption", (int)Modifiers.MB_OK);
+                    if(ofd.ShowDialog(this) == true) {
+                        _path = ofd.FileName;
+                    }
+                } catch(Exception ex) {
+                    MessageBox.Show(ex.Message, "Error could not load DLL");
+                    Close();
+                }
             };
         }
 
@@ -41,45 +41,62 @@ namespace MaterialDesignWindowsDialogs {
         //  _In_ UINT    uType
         //);
 
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int MessageBox(IntPtr hWnd, string text, string caption, int options);
-
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
-        private delegate int DMessageBox(IntPtr hWnd, string text, string caption, int options);
-
-
-        private static int MessageBoxHook(IntPtr hWnd, string text, string caption, int options) {
-            new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show();
-            //return MessageBox(hWnd, text, caption, options);
-            return 1;
-        }
-
-
         //Return Values of Message Box
         public enum ReturnValues {
-            IDABORT = 3,
-            IDCANCEL = 2,
-            IDCONTINUE = 11,
-            IDIGNORE = 5,
-            IDNO = 7,
-            IDOK = 1,
-            IDRETRY = 4,
-            IDTRYAGAIN = 10,
-            IDYES = 6
+            Abort = 3,
+            Cancel = 2,
+            Continue = 11,
+            Ignore = 5,
+            No = 7,
+            Yes = 6,
+            Ok = 1,
+            Retry = 4,
+            TryAgain = 10
         }
 
         //Modifiers of Message Box
         public enum Modifiers {
-            MB_ABORTRETRYIGNORE = 0x00000002,
-            MB_CANCELTRYCONTINUE = 0x00000006,
-            MB_HELP = 0x00004000,
-            MB_OK = 0x00000000,
-            MB_OKCANCEL = 0x00000001,
-            MB_RETRYCANCEL = 0x00000005,
-            MB_YESNO = 0x00000004,
-            MB_YESNOCANCEL = 0x00000003
+            AbortRetryignore = 0x00000002,
+            CancelTryContinue = 0x00000006,
+            Help = 0x00004000,
+            Ok = 0x00000000,
+            OkCancel = 0x00000001,
+            RetryCancel = 0x00000005,
+            YesNo = 0x00000004,
+            YesNoCancel = 0x00000003
+        }
+
+        private void InjectClick(object sender, RoutedEventArgs e) {
+            try {
+                string channelName = null;
+
+                RemoteHooking.IpcCreateServer<InjectorInterface>(ref channelName, WellKnownObjectMode.SingleCall);
+
+                RemoteHooking.Inject(
+                    int.Parse(pidBox.Text),
+                    InjectionOptions.DoNotRequireStrongName,
+                    _path,
+                    _path,
+                    channelName);
+            } catch(Exception ex) {
+                MessageBox.Show(ex.Message, "Error injecting");
+            }
         }
     }
+
+
+    public class InjectorInterface : MarshalByRefObject {
+        public void IsInstalled() {
+            Console.WriteLine(@"Injected");
+        }
+
+        public void Debug(string msg) {
+            Console.WriteLine(msg);
+        }
+
+        public void ReportException(Exception inInfo) {
+            Console.WriteLine(inInfo.ToString());
+        }
+    }
+
 }

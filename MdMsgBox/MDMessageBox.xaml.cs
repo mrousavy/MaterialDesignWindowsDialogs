@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace MaterialDesignWindowsDialogs {
+namespace MdMsgBox {
     /// <summary>
     /// Interaction logic for MDMessageBox.xaml
     /// </summary>
