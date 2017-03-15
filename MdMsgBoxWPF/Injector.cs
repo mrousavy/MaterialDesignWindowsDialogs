@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.Remoting;
 
-namespace MdMsgBox {
+namespace MdMsgBoxWPF {
 
     //The Interface being passed around on Injecting
     public class InjectorInterface : MarshalByRefObject {
@@ -20,9 +20,9 @@ namespace MdMsgBox {
     }
 
     //The DLL Injector
-    public static class Injector {
-        //Inject DLL into Program
-        public static void Inject(int processId, string dllPath = "MdMsgBox.dll") {
+    public class Injector {
+
+        public Injector(int processId, string dllPath = "MdMsgBox.dll") {
             string channelName = null;
 
             RemoteHooking.IpcCreateServer<InjectorInterface>(ref channelName, WellKnownObjectMode.SingleCall);
@@ -34,6 +34,5 @@ namespace MdMsgBox {
                dllPath,
                 channelName);
         }
-
     }
 }

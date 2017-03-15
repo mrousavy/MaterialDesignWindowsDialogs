@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows;
 
 namespace MaterialDesignWindowsDialogs {
@@ -7,28 +8,13 @@ namespace MaterialDesignWindowsDialogs {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow {
-        private string _path = "MdMsgBox.dll";
+        private string _path = Path.Combine(System.Reflection.Assembly.GetEntryAssembly().Location, "MdMsgBox.dll");
 
 
         public MainWindow() {
             InitializeComponent();
 
-            Loaded += delegate {
-                try {
-                    OpenFileDialog ofd = new OpenFileDialog {
-                        Title = "Select MdMsgBox.dll",
-                        Filter = "DLL Files|*.dll",
-                        InitialDirectory = @"C:\"
-                    };
-
-                    if(ofd.ShowDialog(this) == true) {
-                        _path = ofd.FileName;
-                    }
-                } catch(Exception ex) {
-                    MessageBox.Show(ex.Message, "Error could not load DLL");
-                    Close();
-                }
-            };
+            dllBox.Text = _path;
         }
 
         //-- ORIGINAL WINDOWS API MESSAGEBOX SIGNATURE
@@ -41,11 +27,30 @@ namespace MaterialDesignWindowsDialogs {
 
         private void InjectClick(object sender, RoutedEventArgs e) {
             try {
-                MdMsgBox.Injector injector = new MdMsgBox.Injector(int.Parse(pidBox.Text), _path);
+                MdMsgBox.Injector.Inject(int.Parse(pidBox.Text), _path);
             } catch(Exception ex) {
                 MessageBox.Show(ex.Message, "Error injecting");
             }
         }
+        private void OpenClick(object sender, RoutedEventArgs e) {
+            try {
+                OpenFileDialog ofd = new OpenFileDialog {
+                    Title = "Select MdMsgBox.dll",
+                    Filter = "DLL Files|*.dll",
+                    InitialDirectory = Path.GetDirectoryName(_path)
+                };
+
+                if(ofd.ShowDialog(this) == true) {
+                    _path = ofd.FileName;
+                    dllBox.Text = _path;
+                }
+            } catch(Exception ex) {
+                MessageBox.Show(ex.Message, "Error could not load DLL");
+                Close();
+            }
+        }
+
+
     }
 
 

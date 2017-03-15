@@ -8,17 +8,26 @@
         Title="MdMsgBox Injector" Height="300" Width="400">
     <Grid>
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
-            
-        <Label VerticalAlignment="Top" HorizontalAlignment="Left">Inject Material Design Message Box (MdMsgBox) into Process</Label>
-        
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10">
-            <Label>Process Id:</Label>
 
-                <TextBox Width="50" x:Name="pidBox" Margin="3"/>
+                <Label VerticalAlignment="Top" HorizontalAlignment="Left">Inject Material Design Message Box (MdMsgBox) into Process</Label>
+                
 
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="Gray" FontSize="12" Height="24" Margin="3" Click="InjectClick">Inject</Button>
-        </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10">
+                <Label>DLL Path:</Label>
 
-        </StackPanel>
+                <TextBox Width="170" x:Name="dllBox" Margin="3" VerticalAlignment="Center" IsReadOnly="True"/>
+
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="Gray" FontSize="12" Height="24" Margin="3" Click="OpenClick">...</Button>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10">
+                    <Label>Process Id:</Label>
+
+                    <TextBox Width="60" x:Name="pidBox" VerticalAlignment="Center" Margin="3"/>
+
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Foreground="Gray" FontSize="12" Height="24" Margin="3" Click="InjectClick">Inject</Button>
+                </StackPanel>
+
+            </StackPanel>
     </Grid>
 </Window>
