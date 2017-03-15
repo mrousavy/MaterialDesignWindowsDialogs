@@ -57,6 +57,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Injector.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MDMessageBox.xaml.cs">
       <DependentUpon>MDMessageBox.xaml</DependentUpon>

@@ -1,7 +1,5 @@
-﻿using EasyHook;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
-using System.Runtime.Remoting;
 using System.Windows;
 
 namespace MaterialDesignWindowsDialogs {
@@ -43,16 +41,7 @@ namespace MaterialDesignWindowsDialogs {
 
         private void InjectClick(object sender, RoutedEventArgs e) {
             try {
-                string channelName = null;
-
-                RemoteHooking.IpcCreateServer<InjectorInterface>(ref channelName, WellKnownObjectMode.SingleCall);
-
-                RemoteHooking.Inject(
-                    int.Parse(pidBox.Text),
-                    InjectionOptions.DoNotRequireStrongName,
-                    _path,
-                    _path,
-                    channelName);
+                MdMsgBox.Injector injector = new MdMsgBox.Injector(int.Parse(pidBox.Text), _path);
             } catch(Exception ex) {
                 MessageBox.Show(ex.Message, "Error injecting");
             }

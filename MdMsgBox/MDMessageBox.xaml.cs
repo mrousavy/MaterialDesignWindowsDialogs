@@ -13,7 +13,6 @@ namespace MdMsgBox {
     public partial class MDMessageBox : Window {
         public enum DialogType { YesNo, Ok, OkCancel }
 
-
         public MDMessageBox(IntPtr hWnd, string text, string caption, DialogType type) {
             InitializeComponent();
 
@@ -26,7 +25,7 @@ namespace MdMsgBox {
         private async void ShowCorrectDialog(string text, string caption, DialogType type) {
             switch(type) {
                 case DialogType.Ok:
-                    await DialogOK(text, caption);
+                    await DialogOk(text, caption);
                     break;
                 case DialogType.YesNo:
                     break;
@@ -67,7 +66,7 @@ namespace MdMsgBox {
             DialogHost.CloseDialogCommand.Execute(null, DialogHost);
         }
 
-        private async Task DialogOK(string text, string caption) {
+        private async Task DialogOk(string text, string caption) {
             CloseDialog();
 
             StackPanel vPanel = new StackPanel {
@@ -75,7 +74,6 @@ namespace MdMsgBox {
                 MinWidth = 150,
                 MinHeight = 70
             };
-
 
             Label captionLabel = new Label {
                 Content = caption,
@@ -110,7 +108,7 @@ namespace MdMsgBox {
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
+        private static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT {

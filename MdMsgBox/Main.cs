@@ -1,39 +1,65 @@
 ﻿using EasyHook;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace MdMsgBox {
     public class Main : IEntryPoint {
         private readonly InjectorInterface _interface;
-        private string _channelName;
+        private Stack<string> _queue = new Stack<string>();
 
 
         public Main(RemoteHooking.IContext inContext, string inChannelName) {
-            try {
-                _interface = RemoteHooking.IpcConnectClient<InjectorInterface>(inChannelName);
-                _channelName = inChannelName;
-                //_interface.IsInstalled(Process.GetCurrentProcess().Id);
-            } catch(Exception ex) {
-                //_interface.ErrorHandler(ex);
-            }
+            _interface = RemoteHooking.IpcConnectClient<InjectorInterface>(inChannelName);
         }
 
         public void Run(RemoteHooking.IContext inContext, string inChannelName) {
             LocalHook hook = LocalHook.Create(
-                LocalHook.GetProcAddress("user32.dll", "MessageBoxW"),
-                new DMessageBox(MessageBoxHook),
-                this);
+                    LocalHook.GetProcAddress("user32.dll", "MessageBoxW"),
+                    new DMessageBox(MessageBoxHook),
+                    this);
 
-            IEnumerable<int> pidsEnum = Process.GetProcesses().Select(p => p.Id);
-            int[] pids = pidsEnum.ToArray();
+            hook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
 
-            hook.ThreadACL.SetExclusiveACL(new[] { 0 });
+            //IEnumerable<int> pidsEnum = Process.GetProcesses().Select(p => p.Id);
+            //int[] pids = pidsEnum.ToArray();
 
             MessageBox(IntPtr.Zero, "Hook Initialized", "Success", (int)Modifiers.Ok);
+
+            try {
+                while(true) {
+                    System.Threading.Thread.Sleep(100);
+
+                    if(_queue.Count > 0) {
+                        string[] package = null;
+                        lock(_queue) {
+                            package = _queue.ToArray();
+                            _queue.Clear();
+                        }
+                        _interface.Debug(package[0]);
+                    }
+                }
+            } catch {
+                // ignored
+            }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //-- ORIGINAL WINDOWS API MESSAGEBOX SIGNATURE
         //int WINAPI MessageBox(
@@ -53,10 +79,13 @@ namespace MdMsgBox {
         public delegate int DMessageBox(IntPtr hWnd, string text, string caption, int options);
 
         //Delegate Signature implementation
-        private static int MessageBoxHook(IntPtr hWnd, string text, string caption, int options) {
-            new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show();
+        public static int MessageBoxHook(IntPtr hWnd, string text, string caption, int options) {
+            Main This = (Main)HookRuntimeInfo.Callback;
+            lock(This._queue) {
+                This._queue.Push($"HWND: {hWnd} | Text: {text} | Caption: {caption} | Options: {options}");
+            }
 
-            System.Windows.MessageBox.Show("sup");
+            new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show();
 
             //return MessageBox(hWnd, text, caption, options);
             return (int)ReturnValues.Ok;
@@ -86,20 +115,6 @@ namespace MdMsgBox {
             RetryCancel = 0x00000005,
             YesNo = 0x00000004,
             YesNoCancel = 0x00000003
-        }
-    }
-
-
-
-
-
-    public class InjectorInterface : MarshalByRefObject {
-        public void IsInstalled(int inClientPid) {
-            Console.WriteLine($"Injected into {inClientPid}");
-        }
-
-        public void ErrorHandler(Exception ex) {
-            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 }
