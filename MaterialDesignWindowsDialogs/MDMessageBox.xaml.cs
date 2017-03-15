@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,12 +18,12 @@ namespace MaterialDesignWindowsDialogs {
             InitializeComponent();
 
             SetWindowSize(hWnd);
-            
+
             ShowCorrectDialog(text, caption, type);
         }
-        
+
         //Select and Show the correct Dialog from the type
-        private async void ShowCorrectDialog(string text, string caption, DialogType type){
+        private async void ShowCorrectDialog(string text, string caption, DialogType type) {
             switch(type) {
                 case DialogType.Ok:
                     await DialogOK(text, caption);
@@ -66,7 +67,7 @@ namespace MaterialDesignWindowsDialogs {
             DialogHost.CloseDialogCommand.Execute(null, DialogHost);
         }
 
-        private async void DialogOK(string text, string caption) {
+        private async Task DialogOK(string text, string caption) {
             CloseDialog();
 
             StackPanel vPanel = new StackPanel {
