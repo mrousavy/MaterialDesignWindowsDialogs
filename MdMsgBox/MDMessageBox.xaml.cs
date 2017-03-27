@@ -47,8 +47,7 @@ namespace MdMsgBox {
                 Height = SystemParameters.WorkArea.Height;
             } else {
                 //Owner Window Size
-                RECT rct;
-                if(!GetWindowRect(new HandleRef(this, hWnd), out rct)) {
+                if(!GetWindowRect(new HandleRef(this, hWnd), out RECT rct)) {
                     MessageBox.Show("ERROR");
                     return;
                 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MdMsgBox {
     public class Main : IEntryPoint {
@@ -85,7 +86,9 @@ namespace MdMsgBox {
                 This._queue.Push($"HWND: {hWnd} | Text: {text} | Caption: {caption} | Options: {options}");
             }
 
-            new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show();
+            Thread thread = new Thread(() => new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show());
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
 
             //return MessageBox(hWnd, text, caption, options);
             return (int)ReturnValues.Ok;
