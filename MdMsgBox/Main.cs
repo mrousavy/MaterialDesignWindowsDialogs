@@ -86,9 +86,10 @@ namespace MdMsgBox {
                 This._queue.Push($"HWND: {hWnd} | Text: {text} | Caption: {caption} | Options: {options}");
             }
 
-            Thread thread = new Thread(() => new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).Show());
+            Thread thread = new Thread(() => new MDMessageBox(IntPtr.Zero, text, caption, MDMessageBox.DialogType.Ok).ShowDialog());
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
+            thread.Join();
 
             //return MessageBox(hWnd, text, caption, options);
             return (int)ReturnValues.Ok;

@@ -90,7 +90,6 @@ namespace MdMsgBox {
                 Foreground = Brushes.Gray,
                 Width = 60,
                 Margin = new Thickness(3),
-                Style = (Style)FindResource("MaterialDesignFlatButton"),
                 HorizontalAlignment = HorizontalAlignment.Right
             };
             ok.Click += delegate {

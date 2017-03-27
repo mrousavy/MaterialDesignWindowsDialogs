@@ -49,8 +49,6 @@ namespace MaterialDesignWindowsDialogs {
                 Close();
             }
         }
-
-
     }
 
 
