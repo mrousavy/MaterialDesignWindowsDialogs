@@ -1,5 +1,7 @@
 # MaterialDesignWindowsDialogs
-A new Theme (Android Material Design) for Windows Message Boxes (by hooking)
+A new Theme _(Android Material Design)_ for _Windows Message Boxes_ (by hooking)
+
+**Warning:** _MaterialDesignWindowsDialogs_ will replace the Default Message Boxes with Material Design Message Boxes by **hooking** and **injecting** a Program with my MdMsgBox.dll. **Use with caution**
 
 [Windows Message Box](https://msdn.microsoft.com/en-us/library/windows/desktop/ms645505(v=vs.85).aspx)
 
